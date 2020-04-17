@@ -1,0 +1,230 @@
+<html>
+  <head>
+    <title>测试WKWebView问题</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+    <script
+      defer
+      type="text/javascript"
+      src="hx_jsbridge_commonapi.js"
+    ></script>
+    <script
+      defer
+      type="text/javascript"
+      src="hx_jsbridge_wechatapi.js"
+    ></script>
+    <script defer type="text/javascript" src="hx_jsbridge_core.js"></script>
+    <script
+      defer
+      type="text/javascript"
+      src="hx_jsbridge_eventsource.js"
+    ></script>
+    <script defer type="text/javascript" src="hx_jsbridge.js"></script>
+  </head>
+  <body>
+    <button onclick="clickedResetAllRespText()"> 重置所有返回文字 </button>
+    <h2>暴露的微信相关的API</h2>
+    <h4 onclick="isWechatInstalled()">是否安装微信</h4>
+    <p id="isWechatInstalled"></p>
+    <hr>
+    <h4>分享</h4>
+    
+    <form>
+      <input type="text" id="url" value="">
+      <input type="button" value="获取base64字符串" style="width: 200px;" onclick="clickedGetBase64()">
+      <br><br>
+
+      <span>分享类型：</span>
+      <select id="shareType">
+            <option value="timeline" selected="selected">timeline</option>
+            <option value="session">session</option>
+      </select>
+      <br><br>
+      
+      <span>contentType：</span>
+      <select id="contentType">
+        <option value="image">image</option>
+        <option value="text" selected="selected">text</option>
+        <option value="imgUrl">imgUrl</option>
+      </select>
+      <br><br>
+      <span>content:</span>
+      <input type="text" id="content" value="">
+    </form>
+    <br><br>
+    <input type="button" value="分享" style="width: 200px;" onclick="clickedShare()">
+    <br><br>
+    <span>返回:</span>
+    <p id="shareResult"></p>
+    <hr>
+
+    <p id="shareTextToSenceSession"></p>
+    <h4 onclick="shareToMiniProgram()">分享到小程序</h4>
+    <p id="shareToMiniProgram"></p>
+    <h4 onclick="wechatLogin()">微信登录</h4>
+    <p id="wechatLogin"></p>
+    <h2>暴露的通用功能</h2>
+    <h4 onclick="copyToClipBoard()">拷贝文字到剪切板</h4>
+    <p id="copyToClipBoard"></p>
+    <h4 onclick="changeNavigationTitle()">修改导航栏的title</h4>
+    <p id="changeNavigationTitle"></p>
+    <h2>native发送消息给js</h2>
+    <h4 onclick="onAppDidEnterBackground()">开始监听app进入后台</h4>
+    <p id="onAppDidEnterBackground"></p>
+    <h4 onclick="onAppDidEnterForground()">开始监听app进入前台</h4>
+    <p id="onAppDidEnterForground"></p>
+  </body>
+
+  <script>
+    function clickedResetAllRespText() {
+      document.getElementById("isWechatInstalled").innerText = "";
+      document.getElementById("shareResult").innerText = "";
+      document.getElementById("wechatLogin").innerText = "";
+      document.getElementById("copyToClipBoard").innerText = "";
+      document.getElementById("changeNavigationTitle").innerText = "";
+      document.getElementById("onAppDidEnterBackground").innerText = "";
+      document.getElementById("onAppDidEnterForground").innerText = "";
+    }
+
+    function clickedShare() {
+      console.log("aaa");
+       var shareType = document.getElementById("shareType").value;
+       var contentType = document.getElementById("contentType").value;
+       var content = document.getElementById("content").value;
+       if(shareType === "timeline"){
+        console.log("bbb");
+          window.hxBridge.AppWechatApi.shareToTimeLine(
+                content,
+                contentType,
+                function(resultObj) {
+                  document.getElementById("shareResult").innerText = JSON.stringify(resultObj);
+                }
+          );
+       }else{
+        console.log("ccc");
+          window.hxBridge.AppWechatApi.shareToSenceSession(
+                  content,
+                  contentType,
+                  function(resultObj) {
+                    document.getElementById("shareResult").innerText = JSON.stringify(resultObj);
+                  }
+            );
+       }
+       console.log("ddd");
+
+    }
+
+    function getBase64(imgUrl, callback) {
+      window.URL = window.URL || window.webkitURL;
+      var xhr = new XMLHttpRequest();
+      xhr.open("get", imgUrl, true);
+      // 至关重要
+      xhr.responseType = "blob";
+      xhr.onload = function() {
+        if (this.status == 200) {
+          //得到一个blob对象
+          var blob = this.response;
+          console.log("blob", blob);
+          //  至关重要
+          let oFileReader = new FileReader();
+          oFileReader.onloadend = function(e) {
+            let base64 = e.target.result;
+            callback(base64);
+          };
+          oFileReader.readAsDataURL(blob);
+        }
+      };
+      xhr.send();
+    }
+
+    function clickedGetBase64() {
+      var imgpath = document.getElementById("url").value;
+        getBase64(imgpath,function(base64){
+          document.getElementById("content").value = base64;
+        }) 
+    }
+
+    function isWechatInstalled() {
+        window.hxBridge.Core.sendMessage({"moduleName":"WechatApi11","actionName":"ShareWebPage22","params":{"title":"分享的title","webUrl":"https://www.baidu.com","description":"分享的description","scene":1,"thumbImage":"/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0a\nHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIy\nMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAA0AHQDASIA\nAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQA\nAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3\nODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWm\np6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEA\nAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSEx\nBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElK\nU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3\nuLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD2l5sO\ndhV9n+sReWGehx/Tv29C2N/9JZd25JFEiHOfY49vun8TVWRwstyVJSVZAVcoxUfIuQSOADjn8+1V\nzeh5IWhVWcSFmhRw2Dg5K+vG78cHvzy2MVE2arq3lhoJSx+VmVhkkr+HORkD34Pripd6nbrAzM8y\n+Ww8yNUfzCucZAA3cfe47DnFUb3Xra1tXlmluUjTkSz2E8ewngEtsx1OMYGc4+okydFuagvRCcSC\nd48Z80wsNv8AvcD8x/8AXNlBGZpGVmLA7WBY4HAPTp0xWVd+JbKyhtd6Ty3VzEJYrSCIvKw6n5eM\nY5646H0qHRtW0y9urlEga1u43Um3uIfLljVgqjj0JPb+8M4zT5Xa4zauYmmhKqzK45UhivPvjtWU\n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"}}, function(response){
+                                 document.getElementById("wechatLogin").innerText = JSON.stringify(result);
+                                 })
+    }
+
+    function wechatLogin() {
+      window.hxBridge.AppWechatApi.wechatLogin(function(result) {
+        document.getElementById("wechatLogin").innerText = JSON.stringify(result);
+      });
+    }
+
+    function shareToMiniProgram() {
+      getBase64(
+        "https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=991484339,1504388850&fm=26&gp=0.jpg",
+        function(base64) {
+          var miniProObj = {
+            webpageUrl: "https://www.baidu.com",
+            userName: "gh_a18d80f178d6",
+            path: "/pages/activeCourse?scene=487,100",
+            hdImageData: base64,
+            miniProgramType: 1
+          };
+
+          var shareInfo = {
+            title: "小程序title",
+            description: "小程序description",
+            thumbData: base64
+          };
+
+          window.hxBridge.AppWechatApi.shareToMiniProgram(
+            miniProObj,
+            shareInfo,
+            function(response) {
+              document.getElementById("shareToMiniProgram").innerText = JSON.stringify(response);
+            }
+          );
+        }
+      );
+    }
+
+    function copyToClipBoard() {
+      window.hxBridge.CommonApi.copyToClipBoard(
+        "web text to local clipboard",
+        function(response) {
+          document.getElementById("copyToClipBoard").innerText = JSON.stringify(response);
+        }
+      );
+    }
+
+    function changeNavigationTitle() {
+        window.hxBridge.CommonApi.getAppVersion(function(response){
+                                                document.getElementById("changeNavigationTitle").innerText = JSON.stringify(response);
+                                                });
+     
+    }
+
+    function onAppDidEnterBackground() {
+      window.hxBridge.addEventListener(
+        AppLifeCircleEventSource.moduleName,
+        AppLifeCircleEventSource.AppDidEnterBackground,
+        function(param) {
+          document.getElementById("onAppDidEnterBackground").innerText = ">>监听到app进入后台️️✅";
+          return { code: 11, msg: "dd", data: "success" };
+        }
+      );
+      document.getElementById("onAppDidEnterBackground").innerText = ">>开始监听app进入后台";
+    }
+
+    function onAppDidEnterForground() {
+      window.hxBridge.addEventListener(
+        AppLifeCircleEventSource.moduleName,
+        AppLifeCircleEventSource.AppDidEnterForground,
+        function(param) {
+          document.getElementById("onAppDidEnterForground").innerText = ">>监听到app进入前台✅";
+        }
+      );
+      document.getElementById("onAppDidEnterForground").innerText = ">>开始监听app进入前台";
+    }
+  </script>
+</html>

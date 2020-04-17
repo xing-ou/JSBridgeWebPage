@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title>测试WKWebView问题</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
+    />
+
+    <script defer type="text/javascript" src="hx_jsbridge_core.js"></script>
+    <script
+      defer
+      type="text/javascript"
+      src="hx_jsbridge_routerapi.js"
+    ></script>
+    <script defer type="text/javascript" src="hx_jsbridge.js"></script>
+  </head>
+  <body>
+    <h2>跳转相关api</h2>
+    <h4 onclick="clickedGoToOrderList()">跳转a订单列表页</h4>
+    <p id="clickedGoToOrderList"></p>
+    <h4 onclick="clickedGoToCourseList()">跳转课程列表</h4>
+    <p id="clickedGoToCourseList"></p>
+  </body>
+
+  <script>
+
+    function clickedGoToOrderList() {
+        window.hxBridgeRouterApi.goToOrderList(function(response){
+                                                document.getElementById("clickedGoToOrderList").innerText = JSON.stringify(response);
+                                                });
+     
+    }
+
+  function clickedGoToCourseList() {
+      window.hxBridgeRouterApi.goToCourseList(function(response){
+                                              document.getElementById("clickedGoToCourseList").innerText = JSON.stringify(response);
+                                              });
+                                              
+  }
+ 
+
+
+  </script>
+</html>
