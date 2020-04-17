@@ -41,6 +41,10 @@ class AppWechatApi {
   wechatLogin(callback) {
     this.sendWechatApiMessage("WechatLogin", {}, callback);
   }
+    /** 微信登录 */
+  wechatAuth(appId,callback) {
+      this.sendWechatApiMessage("Auth", {"appId":appId}, callback);
+  }
   /** 分享小程序
      -- miniProgObj:为分享的小程序对象，如下：
      {

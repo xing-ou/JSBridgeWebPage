@@ -60,6 +60,13 @@
     <span>返回:</span>
     <p id="shareResult"></p>
     <hr>
+    
+    <h4>微信授权</h4>
+    <span>appid:</span>
+    <input type="text" id="appId" value="">
+    <input type="button" value="微信授权" style="width: 200px;" onclick="clickedWechatAuth()">
+    <p id="authCode"></p>
+    <hr>
 
     <p id="shareTextToSenceSession"></p>
     <h4 onclick="shareToMiniProgram()">分享到小程序</h4>
@@ -87,7 +94,15 @@
       document.getElementById("changeNavigationTitle").innerText = "";
       document.getElementById("onAppDidEnterBackground").innerText = "";
       document.getElementById("onAppDidEnterForground").innerText = "";
+      document.getElementById("authCode").innerText = "";
     }
+  
+  function clickedWechatAuth(){
+      var appId = document.getElementById("appId").value;
+      window.hxBridge.AppWechatApi.wechatAuth(appId,function(resultObj) {
+        document.getElementById("authCode").innerText = JSON.stringify(resultObj);
+      })
+  }
 
     function clickedShare() {
       console.log("aaa");
