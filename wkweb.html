@@ -6,11 +6,17 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"
     />
+
+<script type="text/javascript" src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
+
+
+
     <script
       defer
       type="text/javascript"
       src="hx_jsbridge_commonapi.js"
     ></script>
+
     <script
       defer
       type="text/javascript"
@@ -86,6 +92,14 @@
   </body>
 
   <script>
+// 初始化vConsole
+window.vConsole = new window.VConsole();
+</script>
+
+  <script>
+
+
+
     function clickedResetAllRespText() {
       document.getElementById("isWechatInstalled").innerText = "";
       document.getElementById("shareResult").innerText = "";
