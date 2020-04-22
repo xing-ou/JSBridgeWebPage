@@ -21,6 +21,7 @@ class Core {
   }
 
   sendMessage(msg, callback) {
+    console.log("调用嘞sendMessage")
     var msgObj = msg;
     if (callback && typeof callback === "function") {
       var callbackid = this.getNextCallbackID();
@@ -30,18 +31,21 @@ class Core {
     }
 
     if (this.isIOS) {
+      console.log("进入了isIOS")
       try {
         window.webkit.messageHandlers.WKJSBridge.postMessage(msgObj);
       } catch (error) {
         console.log("error native message");
       }
     } else if (this.isAndroid) {
+      console.log("进入了isAndroid")
       try {
         nativeObject.postMessage(JSON.stringify(msgObj));
       } catch (error) {
         console.log("error native message");
       }
     }
+    console.log("ua是:" + this.ua)
   }
 
   callbackDispatcher(callbackId, resultjson) {

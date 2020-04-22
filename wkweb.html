@@ -98,6 +98,7 @@
     }
   
   function clickedWechatAuth(){
+      console.log("点击了微信授权")
       var appId = document.getElementById("appId").value;
       window.hxBridge.AppWechatApi.wechatAuth(appId,function(resultObj) {
         document.getElementById("authCode").innerText = JSON.stringify(resultObj);

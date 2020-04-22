@@ -43,6 +43,7 @@ class AppWechatApi {
   }
     /** 微信登录 */
   wechatAuth(appId,callback) {
+    console.log("调用嘞wechatAuth")
       this.sendWechatApiMessage("Auth", {"appId":appId}, callback);
   }
   /** 分享小程序
@@ -72,6 +73,7 @@ class AppWechatApi {
   }
 
   sendWechatApiMessage(action, param, callback) {
+    console.log("调用嘞sendWechatApiMessage")
     var msgBody = {};
     msgBody.moduleName = "WechatApi";
     msgBody.actionName = action;
