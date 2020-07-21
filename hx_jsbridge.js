@@ -15,4 +15,4 @@ class HXBridge {
   }
 }
 
-window.hxBridge = new HXBridge();
+window.hxBridge = {};
